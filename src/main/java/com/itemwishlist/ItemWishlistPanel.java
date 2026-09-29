@@ -47,11 +47,11 @@ class ItemWishlistPanel extends PluginPanel
 	private final JLabel emptyLabel = new JLabel("Search for an item above to add it.");
 
 	private List<WishlistItem> currentResults = Collections.emptyList();
-	private Map<Integer, Integer> currentResultPrices = Collections.emptyMap();
+	private Map<Integer, Long> currentResultPrices = Collections.emptyMap();
 	private Set<Integer> wishlistIds = Collections.emptySet();
 
 	private List<WishlistItem> shownItems = Collections.emptyList();
-	private Map<Integer, Integer> shownPrices = Collections.emptyMap();
+	private Map<Integer, Long> shownPrices = Collections.emptyMap();
 
 	ItemWishlistPanel(ItemWishlistPlugin plugin, ItemManager itemManager)
 	{
@@ -117,7 +117,7 @@ class ItemWishlistPanel extends PluginPanel
 		plugin.refresh();
 	}
 
-	void showSearchResults(List<WishlistItem> results, Map<Integer, Integer> prices)
+	void showSearchResults(List<WishlistItem> results, Map<Integer, Long> prices)
 	{
 		currentResults = results;
 		currentResultPrices = prices;
@@ -129,7 +129,7 @@ class ItemWishlistPanel extends PluginPanel
 		searchResults.removeAll();
 		for (WishlistItem result : currentResults)
 		{
-			final int price = currentResultPrices.getOrDefault(result.getId(), 0);
+			final long price = currentResultPrices.getOrDefault(result.getId(), 0L);
 			if (wishlistIds.contains(result.getId()))
 			{
 				searchResults.add(buildRow(result.getId(), result.getName(), priceLabel(price),
@@ -147,7 +147,7 @@ class ItemWishlistPanel extends PluginPanel
 		repaint();
 	}
 
-	void showWishlist(List<WishlistItem> items, Map<Integer, Integer> prices)
+	void showWishlist(List<WishlistItem> items, Map<Integer, Long> prices)
 	{
 		shownItems = items;
 		shownPrices = prices;
@@ -157,7 +157,7 @@ class ItemWishlistPanel extends PluginPanel
 		for (WishlistItem item : items)
 		{
 			wishlistIds.add(item.getId());
-			wishlistRows.add(buildWishlistRow(item, prices.getOrDefault(item.getId(), 0)));
+			wishlistRows.add(buildWishlistRow(item, prices.getOrDefault(item.getId(), 0L)));
 		}
 
 		emptyLabel.setVisible(items.isEmpty());
@@ -171,7 +171,7 @@ class ItemWishlistPanel extends PluginPanel
 		long count = 0;
 		for (WishlistItem item : shownItems)
 		{
-			total += linePrice(shownPrices.getOrDefault(item.getId(), 0), item.getQuantity());
+			total += linePrice(shownPrices.getOrDefault(item.getId(), 0L), item.getQuantity());
 			count += item.getQuantity();
 		}
 
@@ -179,9 +179,9 @@ class ItemWishlistPanel extends PluginPanel
 		countLabel.setText(count == 1 ? "1 item" : QuantityFormatter.formatNumber(count) + " items");
 	}
 
-	private static long linePrice(int unitPrice, int quantity)
+	private static long linePrice(long unitPrice, int quantity)
 	{
-		return (long) unitPrice * quantity;
+		return unitPrice * quantity;
 	}
 
 	private JPanel buildTotalPanel()
@@ -210,7 +210,7 @@ class ItemWishlistPanel extends PluginPanel
 		return panel;
 	}
 
-	private JPanel buildWishlistRow(WishlistItem item, int unitPrice)
+	private JPanel buildWishlistRow(WishlistItem item, long unitPrice)
 	{
 		final JLabel priceLabel = priceLabel(linePrice(unitPrice, item.getQuantity()));
 		priceLabel.setToolTipText(formatPrice(linePrice(unitPrice, item.getQuantity())) + " (" + formatPrice(unitPrice) + " each)");
@@ -239,7 +239,7 @@ class ItemWishlistPanel extends PluginPanel
 		return row;
 	}
 
-	private JSpinner buildQuantitySpinner(WishlistItem item, int unitPrice, JLabel priceLabel)
+	private JSpinner buildQuantitySpinner(WishlistItem item, long unitPrice, JLabel priceLabel)
 	{
 		final JSpinner spinner = new JSpinner(new SpinnerNumberModel(item.getQuantity(), 1, Integer.MAX_VALUE, 1));
 		spinner.setEditor(new JSpinner.NumberEditor(spinner, "#"));

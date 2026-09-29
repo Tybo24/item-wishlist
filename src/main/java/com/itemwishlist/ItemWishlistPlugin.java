@@ -99,7 +99,7 @@ public class ItemWishlistPlugin extends Plugin
 		clientThread.invoke(() ->
 		{
 			final List<WishlistItem> matches = new ArrayList<>();
-			final Map<Integer, Integer> prices = new HashMap<>();
+			final Map<Integer, Long> prices = new HashMap<>();
 			for (ItemPrice result : itemManager.search(trimmed))
 			{
 				if (matches.size() >= MAX_SEARCH_RESULTS)
@@ -168,7 +168,7 @@ public class ItemWishlistPlugin extends Plugin
 
 		clientThread.invoke(() ->
 		{
-			final Map<Integer, Integer> prices = new HashMap<>();
+			final Map<Integer, Long> prices = new HashMap<>();
 			for (WishlistItem item : snapshot)
 			{
 				prices.put(item.getId(), itemManager.getItemPrice(item.getId()));
@@ -184,7 +184,7 @@ public class ItemWishlistPlugin extends Plugin
 		});
 	}
 
-	private void showSearchResults(List<WishlistItem> results, Map<Integer, Integer> prices)
+	private void showSearchResults(List<WishlistItem> results, Map<Integer, Long> prices)
 	{
 		SwingUtilities.invokeLater(() ->
 		{
